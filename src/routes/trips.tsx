@@ -9,32 +9,21 @@ export const Route = createFileRoute("/trips")({
 
 function RouteComponent() {
 	const [page, setPage] = useState(1);
-	const query: { q?: string } = Route.useSearch();
-	const [search, setSearch] = useState(query.q || "");
-	const navigate = useNavigate({ from: Route.fullPath });
-	const { data: tripData, isLoading: tripLodeing, isFetching } = useTrip(query);
+	const [search, setSearch] = useState("");
 	const screchTram = useDebounce(search, 500);
-
-	const handleNextPage = () => setPage((prev) => prev + 1);
-	const handlePreviousPage = () => setPage((prev) => Math.max(prev - 1, 1));
+	const navigate = useNavigate({ from: Route.fullPath });
+	const query = Route.useSearch();
+	const { data: tripData } = useTrip(query);
 
 	useEffect(() => {
 		navigate({ search: (prev) => ({ ...prev, q: screchTram }) });
 	}, [screchTram, navigate]);
-
 	useEffect(() => {
-		if (tripData) {
-			navigate({ search: (prev) => ({ ...prev, page }) });
-		}
-	}, [page, tripData, navigate]);
+		navigate({ search: (prev) => ({ ...prev, page }) });
+	}, [page, navigate]);
 
-	if (isFetching) {
-		return <div>Loading...</div>;
-	}
-
-	if (tripLodeing) {
-		return <div>Loading...</div>;
-	}
+	const handleNextPage = () => setPage((prev) => prev + 1);
+	const handlePreviousPage = () => setPage((prev) => Math.max(prev - 1, 1));
 
 	return (
 		<div>

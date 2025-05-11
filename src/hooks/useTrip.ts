@@ -14,7 +14,7 @@ export const useTrip = (query: Record<string, unknown>) => {
 	const limit = query.limit ? query.limit : 10;
 
 	return useQuery({
-		queryKey: ["trip", { page, limit }],
+		queryKey: ["trip", { page, limit, query }],
 		queryFn: async () => {
 			const res = await axios.get(
 				`${import.meta.env.VITE_API_URL}/api/v1/trips`,
@@ -22,6 +22,7 @@ export const useTrip = (query: Record<string, unknown>) => {
 					params: {
 						page,
 						limit,
+						searchTerm: query.q,
 					},
 				}
 			);
